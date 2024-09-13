@@ -1,0 +1,32 @@
+# Copyright 2024 calm.wang@hotmail.com
+# SPDX-License-Identifier: LGPL-3.0-only
+version: '3.9'
+
+networks:
+  tg_bot_network:
+
+services:
+  tg_bot:
+    #    image: calmw/tbot:0.0.7 # arm64
+    image: calmw/tbot:0.0.8 # x86
+    container_name: tg_bot
+    restart: always
+    #    ports:
+    #      - 9001:8000
+    environment:
+      - TG_TOKEN=XXXX
+      - BalanceThreshold=20000000000000000
+      #      - BalanceThreshold=2000000000000000000
+      - Report_Interval=1800
+    networks:
+      - tg_bot_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "1"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G

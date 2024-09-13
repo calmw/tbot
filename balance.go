@@ -7,7 +7,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/shopspring/decimal"
 	"log"
-	"math/big"
 	"os"
 )
 
@@ -25,37 +24,52 @@ func client() *ethclient.Client {
 	return cli
 }
 
-func Balance(account string) *big.Int {
+func Balance(account string) string {
 	cli := client()
 	b, err := cli.BalanceAt(context.Background(), common.HexToAddress(account), nil)
 	if err != nil {
-		return nil
+		return "0"
 	}
 
 	log.Println(fmt.Sprintf("%s balanced at %s", account, b.String()))
-	return b
+	return b.String()
 }
 
 func CheckBalance() {
-	balanceThreshold := big.NewInt(1e16 * 2) //0.02
-	//balanceThreshold := big.NewInt(1e18 * 2) //0.02
+	deci18 := decimal.NewFromInt(1e18)
+	balanceThreshold, err := decimal.NewFromString(os.Getenv("BalanceThreshold"))
+	log.Println("balanceThreshold", balanceThreshold)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	b1, err := decimal.NewFromString(Balance(Account1))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	b2, err := decimal.NewFromString(Balance(Account2))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	bot, err := NewTelegram("https://api.telegram.org", os.Getenv("TG_TOKEN"))
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	b1 := Balance(Account1)
-	b2 := Balance(Account2)
-	deci18 := decimal.NewFromInt(1e18)
-	if b1.Cmp(balanceThreshold) == -1 {
-		bal := decimal.NewFromInt(b1.Int64()).Div(deci18)
+
+	log.Println(fmt.Sprintf("账户：%s, 当前剩余：%s,阀值:%s", Account1, b1.Div(deci18).String(), balanceThreshold.Div(deci18)))
+	log.Println(fmt.Sprintf("账户：%s, 当前剩余：%s,阀值:%s", Account1, b2.Div(deci18).String(), balanceThreshold.Div(deci18)))
+
+	if (b1.Cmp(balanceThreshold) == -1) && (b2.Cmp(balanceThreshold) == -1) {
+		bal := b1.Div(deci18)
 		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account1, bal.String()), 5222613687, false)
 		if err != nil {
 			log.Println(err)
 		}
-	}
-	if b2.Cmp(balanceThreshold) == -1 {
-		bal := decimal.NewFromInt(b2.Int64()).Div(deci18)
+		bal = b2.Div(deci18)
 		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account2, bal.String()), 5222613687, false)
 		if err != nil {
 			log.Println(err)

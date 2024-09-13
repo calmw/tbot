@@ -1,9 +1,15 @@
 package main
 
-import "github.com/jasonlvhit/gocron"
+import (
+	"github.com/jasonlvhit/gocron"
+	"os"
+	"strconv"
+)
 
 func BridgeGasTest() {
+	interval := os.Getenv("Report_Interval")
+	num, _ := strconv.ParseInt(interval, 10, 64)
 	s := gocron.NewScheduler()
-	_ = s.Every(20).Seconds().From(gocron.NextTick()).Do(CheckBalance)
+	_ = s.Every(uint64(num)).Seconds().From(gocron.NextTick()).Do(CheckBalance)
 	<-s.Start()
 }
