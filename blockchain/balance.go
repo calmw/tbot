@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -9,11 +10,7 @@ import (
 	"log"
 	"os"
 	"tbot/telegram"
-)
-
-const (
-	Account1 = "0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A"
-	Account2 = "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"
+	"time"
 )
 
 var chains = make([]map[string]interface{}, 0)
@@ -42,28 +39,45 @@ func NewChains() {
 	//})
 }
 
-func client(rpc string) *ethclient.Client {
-	cli, err := ethclient.Dial(rpc)
-	if err != nil {
-		panic(err)
+func client(rpc string) (*ethclient.Client, error) {
+	var cli *ethclient.Client
+	var err error
+	for i := 0; i < 20; i++ {
+		cli, err = ethclient.Dial(rpc)
+		if err == nil {
+			return cli, nil
+		}
+		time.Sleep(time.Second)
 	}
-	return cli
+
+	return nil, errors.New("rpc error")
 }
 
-func Balance(account, rpc string) string {
-	cli := client(rpc)
-	b, err := cli.BalanceAt(context.Background(), common.HexToAddress(account), nil)
+func Balance(account, rpc string) (string, error) {
+	cli, err := client(rpc)
 	if err != nil {
-		return "0"
+		log.Println(err)
+		return "0", err
 	}
 
-	return b.String()
+	for i := 0; i < 20; i++ {
+		b, errB := cli.BalanceAt(context.Background(), common.HexToAddress(account), nil)
+		if errB == nil {
+			return b.String(), nil
+		}
+		time.Sleep(time.Second)
+	}
+
+	return "0", errors.New("get balance error")
 }
 
 func CheckBalance() {
+	var bot *telegram.Telegram
+	var balance1, balance2 string
+	var balanceThreshold, b1, b2 decimal.Decimal
+
 	deci18 := decimal.NewFromInt(1e18)
 	chatId, err := decimal.NewFromString(os.Getenv("CHAT_ID"))
-	fmt.Println(chatId, 8889)
 	if err != nil {
 		log.Println(err)
 		return
@@ -71,25 +85,36 @@ func CheckBalance() {
 	ChatId := 0 - chatId.BigInt().Int64()
 
 	for _, chain := range chains {
-		balanceThreshold, err := decimal.NewFromString(chain["threshold"].(string))
+		balanceThreshold, err = decimal.NewFromString(chain["threshold"].(string))
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		rpc := chain["rpc"].(string)
 		chainName := chain["name"].(string)
 		accounts := chain["accounts"].([]string)
-		b1, err := decimal.NewFromString(Balance(accounts[0], chain["rpc"].(string)))
+		balance1, err = Balance(accounts[0], rpc)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		b1, err = decimal.NewFromString(balance1)
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		b2, err := decimal.NewFromString(Balance(accounts[1], chain["rpc"].(string)))
+		balance2, err = Balance(accounts[1], rpc)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		b2, err = decimal.NewFromString(balance2)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		bot, err := telegram.NewTelegram("https://api.telegram.org", os.Getenv("TG_TOKEN"))
+		bot, err = telegram.NewTelegram("https://api.telegram.org", os.Getenv("TG_TOKEN"))
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -99,13 +124,13 @@ func CheckBalance() {
 		log.Println(fmt.Sprintf("%s, 账户：%s, 当前剩余：%s,阀值:%s", chainName, accounts[1], b2.Div(deci18).String(), balanceThreshold.Div(deci18)))
 
 		if (b1.Cmp(balanceThreshold) == -1) && (b2.Cmp(balanceThreshold) == -1) {
-			bal := b1.Div(deci18)
-			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[0], bal.String(), balanceThreshold.Div(deci18)), ChatId, false)
+			bal1 := b1.Div(deci18)
+			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[0], bal1.String(), balanceThreshold.Div(deci18)), ChatId, false)
 			if err != nil {
 				log.Println(err)
 			}
-			bal = b2.Div(deci18)
-			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[1], bal.String(), balanceThreshold.Div(deci18)), ChatId, false)
+			bal2 := b2.Div(deci18)
+			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[1], bal2.String(), balanceThreshold.Div(deci18)), ChatId, false)
 			if err != nil {
 				log.Println(err)
 			}
