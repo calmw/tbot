@@ -2,16 +2,16 @@
 
 ``` shell
 # build 
-docker build -t tbot:0.0.8 . 
+docker build -t tbot:0.0.10 . 
 # tag
-docker tag tbot:0.0.8 calmw/tbot:0.0.8
+docker tag tbot:0.0.10 calmw/tbot:0.0.10
 # push
-docker push calmw/tbot:0.0.8
+docker push calmw/tbot:0.0.10
 ```
 
 ## X86版本
 
-- calmw/tbot:0.0.8
+- calmw/tbot:0.0.10
 
 ## Arm版本
 

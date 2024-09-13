@@ -11,13 +11,12 @@ import (
 )
 
 const (
-	RPC      = "https://bsc-mainnet.rpcfast.com/?api_key=xbhWBI1Wkguk8SNMu1bvvLurPGLXmgwYeC4S6g2H7WdwFigZSmPWVZRxrskEQwIf"
 	Account1 = "0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A"
 	Account2 = "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"
 )
 
 func client() *ethclient.Client {
-	cli, err := ethclient.Dial(RPC)
+	cli, err := ethclient.Dial(os.Getenv("RPC"))
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +37,6 @@ func Balance(account string) string {
 func CheckBalance() {
 	deci18 := decimal.NewFromInt(1e18)
 	balanceThreshold, err := decimal.NewFromString(os.Getenv("BalanceThreshold"))
-	log.Println("balanceThreshold", balanceThreshold)
 	if err != nil {
 		log.Println(err)
 		return
