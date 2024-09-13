@@ -7,18 +7,17 @@ networks:
 
 services:
   tg_bot:
-    #    image: calmw/tbot:0.0.12 # arm64
-    image: calmw/tbot:0.0.13 # x86
+    #    image: calmw/tbot:0.0.24 # arm64
+    image: calmw/tbot:0.0.25 # x86
     container_name: tg_bot
     restart: always
     environment:
-      - RPC=xxx
-      - TG_TOKEN=xxx
-      - ChatId=xxx
-      - BalanceThreshold=20000000000000000
-      #      - BalanceThreshold=2000000000000000000
-      #      - Report_Interval=20
-      - Report_Interval=1800
+      - RPC_BSC=xx
+      - RPC_MATCH=xx
+      - RPC_MATCH_L2=xx
+      - TG_TOKEN=xx
+      - CHAT_ID=xx
+      - REPORT_INTERVAL=1800
     networks:
       - tg_bot_network
     logging:

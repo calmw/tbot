@@ -1,4 +1,4 @@
-package main
+package telegram
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type Telegram struct {
 
 func NewTelegram(api, token string) (*Telegram, error) {
 	bot, err := tb.NewBot(tb.Settings{
-		//URL:    api,
+		URL:    api,
 		Token:  token,
 		Poller: &tb.LongPoller{Timeout: 5 * time.Second},
 	})
