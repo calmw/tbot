@@ -30,7 +30,6 @@ func Balance(account string) string {
 		return "0"
 	}
 
-	log.Println(fmt.Sprintf("%s balanced at %s", account, b.String()))
 	return b.String()
 }
 
@@ -42,7 +41,6 @@ func CheckBalance() {
 		return
 	}
 	ChatId := 0 - chatId.BigInt().Int64()
-	log.Println(ChatId, 22222)
 	//return
 	balanceThreshold, err := decimal.NewFromString(os.Getenv("BalanceThreshold"))
 	if err != nil {
@@ -67,7 +65,7 @@ func CheckBalance() {
 	}
 
 	log.Println(fmt.Sprintf("账户：%s, 当前剩余：%s,阀值:%s", Account1, b1.Div(deci18).String(), balanceThreshold.Div(deci18)))
-	log.Println(fmt.Sprintf("账户：%s, 当前剩余：%s,阀值:%s", Account1, b2.Div(deci18).String(), balanceThreshold.Div(deci18)))
+	log.Println(fmt.Sprintf("账户：%s, 当前剩余：%s,阀值:%s", Account2, b2.Div(deci18).String(), balanceThreshold.Div(deci18)))
 
 	if (b1.Cmp(balanceThreshold) == -1) && (b2.Cmp(balanceThreshold) == -1) {
 		bal := b1.Div(deci18)
