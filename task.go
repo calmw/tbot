@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func BridgeGasTest() {
+func bridgeGasTest() {
 	interval := os.Getenv("Report_Interval")
 	num, _ := strconv.ParseInt(interval, 10, 64)
 	s := gocron.NewScheduler()

@@ -7,19 +7,18 @@ networks:
 
 services:
   tg_bot:
-    image: calmw/tbot:0.0.9 # arm64
-#    image: calmw/tbot:0.0.8 # x86
+    #    image: calmw/tbot:0.0.12 # arm64
+    image: calmw/tbot:0.0.13 # x86
     container_name: tg_bot
     restart: always
-    #    ports:
-    #      - 9001:8000
     environment:
-      - RPC=https://bsc-mainnet.rpcfast.com/?api_key=xbhWBI1Wkguk8SNMu1bvvLurPGLXmgwYeC4S6g2H7WdwFigZSmPWVZRxrskEQwIf
-      - TG_TOKEN=7332840336:AAFSA6ZtEdR8HpfMpsQJcZhAzE_IDakynE0
-      #      - BalanceThreshold=20000000000000000
-      - BalanceThreshold=2000000000000000000
-      - Report_Interval=20
-#      - Report_Interval=1800
+      - RPC=xxx
+      - TG_TOKEN=xxx
+      - ChatId=xxx
+      - BalanceThreshold=20000000000000000
+      #      - BalanceThreshold=2000000000000000000
+      #      - Report_Interval=20
+      - Report_Interval=1800
     networks:
       - tg_bot_network
     logging:

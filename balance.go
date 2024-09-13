@@ -36,6 +36,14 @@ func Balance(account string) string {
 
 func CheckBalance() {
 	deci18 := decimal.NewFromInt(1e18)
+	chatId, err := decimal.NewFromString(os.Getenv("ChatId"))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	ChatId := 0 - chatId.BigInt().Int64()
+	log.Println(ChatId, 22222)
+	//return
 	balanceThreshold, err := decimal.NewFromString(os.Getenv("BalanceThreshold"))
 	if err != nil {
 		log.Println(err)
@@ -63,12 +71,12 @@ func CheckBalance() {
 
 	if (b1.Cmp(balanceThreshold) == -1) && (b2.Cmp(balanceThreshold) == -1) {
 		bal := b1.Div(deci18)
-		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account1, bal.String()), 5222613687, false)
+		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account1, bal.String()), ChatId, false)
 		if err != nil {
 			log.Println(err)
 		}
 		bal = b2.Div(deci18)
-		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account2, bal.String()), 5222613687, false)
+		err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 🛢️gas不足\n账户：%s, 当前剩余：%s", Account2, bal.String()), ChatId, false)
 		if err != nil {
 			log.Println(err)
 		}
