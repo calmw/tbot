@@ -123,12 +123,14 @@ func CheckBalance() {
 		log.Println(fmt.Sprintf("%s, 账户：%s, 当前剩余：%s,阀值:%s", chainName, accounts[0], b1.Div(deci18).String(), balanceThreshold.Div(deci18)))
 		log.Println(fmt.Sprintf("%s, 账户：%s, 当前剩余：%s,阀值:%s", chainName, accounts[1], b2.Div(deci18).String(), balanceThreshold.Div(deci18)))
 
-		if (b1.Cmp(balanceThreshold) == -1) && (b2.Cmp(balanceThreshold) == -1) {
+		if b1.Cmp(balanceThreshold) == -1 {
 			bal1 := b1.Div(deci18)
 			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[0], bal1.String(), balanceThreshold.Div(deci18)), ChatId, false)
 			if err != nil {
 				log.Println(err)
 			}
+		}
+		if b2.Cmp(balanceThreshold) == -1 {
 			bal2 := b2.Div(deci18)
 			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[1], bal2.String(), balanceThreshold.Div(deci18)), ChatId, false)
 			if err != nil {
