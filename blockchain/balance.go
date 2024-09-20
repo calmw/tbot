@@ -19,7 +19,7 @@ func NewChains() {
 	// BSC 主网
 	chains = append(chains, map[string]interface{}{
 		"name":      "BSC mainnet",
-		"threshold": "20000000000000000", // 2e16
+		"threshold": "50000000000000000", // 5e16
 		"rpc":       os.Getenv("RPC_BSC"),
 		"accounts":  []string{"0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A", "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"},
 	})
