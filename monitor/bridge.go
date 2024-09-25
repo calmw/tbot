@@ -13,7 +13,7 @@ import (
 
 /// 检控bridge失败订单数量
 
-const MaxFailedOrder = 20
+const MaxFailedOrder = 10
 
 type OrderCount struct {
 	Code int `json:"code"`

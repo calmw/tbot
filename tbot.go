@@ -1,8 +1,11 @@
 package main
 
-import "tbot/blockchain"
+import (
+	"tbot/blockchain"
+	"tbot/task"
+)
 
 func main() {
 	blockchain.NewChains()
-	alarm()
+	task.Alarm()
 }

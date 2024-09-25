@@ -7,7 +7,7 @@ networks:
 
 services:
   tg_bot:
-    image: calmw/tbot:0.0.34
+    image: calmw/tbot:0.0.53
     container_name: tg_bot
     restart: always
     environment:
@@ -16,7 +16,12 @@ services:
       - RPC_MATCH_L2=xx
       - TG_TOKEN=xx
       - CHAT_ID=xx
+      - CHAT_ID_DEBUG_GROUP=xx
+      - BRIDGE_IP=172.28.0.1
+      - PRIVATE_KEY=xx
       - REPORT_INTERVAL=1800
+    #      - REPORT_INTERVAL=65
+    #      - CHAT_ID=4529125714
     networks:
       - tg_bot_network
     logging:

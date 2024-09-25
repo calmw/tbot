@@ -19,20 +19,20 @@ func NewChains() {
 	// BSC 主网
 	chains = append(chains, map[string]interface{}{
 		"name":      "BSC mainnet",
-		"threshold": "50000000000000000", // 5e16
+		"threshold": "100000000000000000", // 5e16
 		"rpc":       os.Getenv("RPC_BSC"),
 		"accounts":  []string{"0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A", "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"},
 	})
-	// MATCH 主网
+	// MATCH 旧主网
 	chains = append(chains, map[string]interface{}{
-		"name":      "Match mainnet",
+		"name":      "Match mainnet old",
 		"threshold": "2000000000000000000", // 2e18
 		"rpc":       os.Getenv("RPC_MATCH"),
 		"accounts":  []string{"0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A", "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"},
 	})
 	// MATCH L2 主网
 	//chains = append(chains, map[string]interface{}{
-	//	"name":      "Match L2 mainnet",
+	//	"name":      "Match mainnet L2",
 	//	"threshold": "2000000000000000000", // 2e18
 	//	"rpc":       os.Getenv("RPC_MATCH_L2"),
 	//	"accounts":  []string{"0xeDDe26D0638d61daFd5dF7717D10d2646bb46B1A", "0xA064C8397dB01AF331ECE59D5b22C18c5DC50a31"},
