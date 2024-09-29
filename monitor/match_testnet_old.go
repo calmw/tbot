@@ -51,14 +51,14 @@ func IsNodeMatchTestnetOldAlive() {
 
 	// 转账测试出块节点
 	to := common.HexToAddress("0x89876D12A4cB4d19957cEBE3663EA485E05fD3f2")
-	err = sendTransaction(cli, big.NewInt(698), &to, big.NewInt(1))
+	err = sendTransactionEvmEgtLondon(cli, big.NewInt(698), &to, big.NewInt(1))
 	if err != nil {
 		sendAlarm("Match testnet old 测试链")
 		return
 	}
 }
 
-func sendTransaction(cli *ethclient.Client, chainId *big.Int, to *common.Address, value *big.Int) error {
+func sendTransactionEvmEgtLondon(cli *ethclient.Client, chainId *big.Int, to *common.Address, value *big.Int) error {
 	privateKey, err := crypto.HexToECDSA(os.Getenv("PRIVATE_KEY"))
 
 	if err != nil {
@@ -101,14 +101,15 @@ func sendTransaction(cli *ethclient.Client, chainId *big.Int, to *common.Address
 		return err
 	}
 
+	// gasprice = min( MaxPriorityFeePerGas + basefee, MaxFeePerGas )
 	txData := &types.DynamicFeeTx{
 		ChainID:   chainId,
 		Nonce:     nonce,
 		To:        to,
 		Value:     value,
 		Gas:       21000,
-		GasFeeCap: header.BaseFee,
-		GasTipCap: gasTipCap,
+		GasFeeCap: header.BaseFee, // 烧掉
+		GasTipCap: gasTipCap,      // 给矿工
 	}
 
 	tx, err := types.SignNewTx(privateKey, types.LatestSignerForChainID(chainId), txData)
@@ -138,7 +139,7 @@ func sendTransaction(cli *ethclient.Client, chainId *big.Int, to *common.Address
 		return err
 	}
 
-	log.Println(fmt.Sprintf("老测试链转账测试成功，Hash:%s,测试账户:%s,余额:%s", receipt.TxHash.String(), fromAddress, at.String()))
+	log.Println(fmt.Sprintf("测试链%d,转账测试成功，Hash:%s,测试账户:%s,余额:%s", chainId.Int64(), receipt.TxHash.String(), fromAddress, at.String()))
 
 	return nil
 }

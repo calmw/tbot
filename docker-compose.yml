@@ -7,19 +7,19 @@ networks:
 
 services:
   tg_bot:
-    image: calmw/tbot:0.0.53
+    image: calmw/tbot:0.0.69
     container_name: tg_bot
     restart: always
     environment:
-      - RPC_BSC=xx
-      - RPC_MATCH=xx
-      - RPC_MATCH_L2=xx
-      - TG_TOKEN=xx
-      - CHAT_ID=xx
-      - CHAT_ID_DEBUG_GROUP=xx
-      - BRIDGE_IP=172.28.0.1
-      - PRIVATE_KEY=xx
-      - REPORT_INTERVAL=1800
+      - RPC_BSC=x
+      - RPC_MATCH=x
+      - RPC_MATCH_L2=x
+      - TG_TOKEN=x
+      - CHAT_ID=x
+      - CHAT_ID_DEBUG_GROUP=x
+      - BRIDGE_IP=x
+      - PRIVATE_KEY=x
+      - REPORT_INTERVAL=x
     #      - REPORT_INTERVAL=65
     #      - CHAT_ID=4529125714
     networks:
