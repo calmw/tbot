@@ -7,7 +7,7 @@ networks:
 
 services:
   tg_bot:
-    image: calmw/tbot:0.0.69
+    image: calmw/tbot:0.0.70
     container_name: tg_bot
     restart: always
     environment:
