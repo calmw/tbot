@@ -113,7 +113,7 @@ func sendTransactionEvmEgtLondon(cli *ethclient.Client, chainId *big.Int, to *co
 	}
 
 	tx, err := types.SignNewTx(privateKey, types.LatestSignerForChainID(chainId), txData)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
 		err = cli.SendTransaction(context.Background(), tx)
 		if err == nil {
 			break
@@ -126,7 +126,7 @@ func sendTransactionEvmEgtLondon(cli *ethclient.Client, chainId *big.Int, to *co
 	}
 
 	var receipt *types.Receipt
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 30; i++ {
 		receipt, err = cli.TransactionReceipt(context.Background(), tx.Hash())
 		if err == nil {
 			break
