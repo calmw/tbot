@@ -5,7 +5,7 @@ FROM  golang AS builder
 ADD . /src
 WORKDIR /src
 ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn
+#ENV GOPROXY=https://goproxy.cn
 RUN go mod tidy
 RUN go build -o /tbot .
 

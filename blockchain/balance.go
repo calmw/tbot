@@ -9,6 +9,7 @@ import (
 	"github.com/shopspring/decimal"
 	"log"
 	"os"
+	erc20 "tbot/blockchain/binding"
 	"tbot/telegram"
 	"time"
 )
@@ -39,7 +40,7 @@ func NewChains() {
 	})
 }
 
-func client(rpc string) (*ethclient.Client, error) {
+func Client(rpc string) (*ethclient.Client, error) {
 	var cli *ethclient.Client
 	var err error
 	for i := 0; i < 20; i++ {
@@ -54,7 +55,7 @@ func client(rpc string) (*ethclient.Client, error) {
 }
 
 func Balance(account, rpc string) (string, error) {
-	cli, err := client(rpc)
+	cli, err := Client(rpc)
 	if err != nil {
 		log.Println(err)
 		return "0", err
@@ -62,6 +63,29 @@ func Balance(account, rpc string) (string, error) {
 
 	for i := 0; i < 20; i++ {
 		b, errB := cli.BalanceAt(context.Background(), common.HexToAddress(account), nil)
+		if errB == nil {
+			return b.String(), nil
+		}
+		time.Sleep(time.Second)
+	}
+
+	return "0", errors.New("get balance error")
+}
+
+func Erc20Balance(account, token, rpc string) (string, error) {
+	cli, err := Client(rpc)
+	if err != nil {
+		log.Println(err)
+		return "0", err
+	}
+	var tokenObj *erc20.Erc20
+	tokenObj, err = erc20.NewErc20(common.HexToAddress(token), cli)
+	if err != nil {
+		return "", err
+	}
+
+	for i := 0; i < 20; i++ {
+		b, errB := tokenObj.BalanceOf(nil, common.HexToAddress(account))
 		if errB == nil {
 			return b.String(), nil
 		}
@@ -135,6 +159,31 @@ func CheckBalance() {
 			err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 🛢️gas不足\n\n链 🔗 : %s\n\n账户: %s, 当前剩余: %s, 低于阀值: %s", chainName, accounts[1], bal2.String(), balanceThreshold.Div(deci18)), ChatId, false)
 			if err != nil {
 				log.Println(err)
+			}
+		}
+		// 检查 Match mainnet L2 跨链桥TOX余额
+		if chainName == "Match mainnet L2" {
+			balanceTox, err := Erc20Balance("0x660406112E2Db5639a2FdD7Fffb21D59aDe69a55", "0x1F294E3B71189dAD7dce235d6FAFBC845C7CD177", rpc)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			bTox, err := decimal.NewFromString(balanceTox)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			bToxETH := bTox.Div(deci18)
+			eth10000Decimal, err := decimal.NewFromString("10000000000000000000000")
+			if err != nil {
+				return
+			}
+			log.Println(fmt.Sprintf("%s, 账户：0x660406112E2Db5639a2FdD7Fffb21D59aDe69a55, 当前剩余：%s TOX,阀值: 10000", chainName, bToxETH))
+			if bTox.Cmp(eth10000Decimal) == -1 {
+				err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero @barlow_node 跨链桥 TOX不足\n\n链 🔗 : %s\n\n账户: 0x660406112E2Db5639a2FdD7Fffb21D59aDe69a55, 当前剩余: %s, 低于阀值: 10000", chainName, bToxETH.String()), ChatId, false)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}

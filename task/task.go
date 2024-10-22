@@ -16,5 +16,6 @@ func Alarm() {
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.IsNodeMatch714TestnetAlive)
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.IsNodeMatch698TestnetAlive)
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.BridgeFailedOrderCount)
+	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(blockchain.CheckErc20Balance)
 	<-s.Start()
 }

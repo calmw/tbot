@@ -17,6 +17,7 @@ services:
       - TG_TOKEN=x
       - CHAT_ID=x
       - CHAT_ID_DEBUG_GROUP=x
+      - CHAT_ID_CHECK_BALANCE_GROUP=x
       - BRIDGE_IP=x
       - PRIVATE_KEY=x
       - REPORT_INTERVAL=x
