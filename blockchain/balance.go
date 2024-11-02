@@ -185,6 +185,29 @@ func CheckBalance() {
 					log.Println(err)
 				}
 			}
+		} else if chainName == "BSC mainnet" {
+			balanceTox, err := Erc20Balance("0x087F0957A8218BA06AdB0465C0aE5B0b57ae0649", "0x837656c3f5858692cCdce13BA66e09d2685073df", rpc)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			bTox, err := decimal.NewFromString(balanceTox)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			bToxETH := bTox.Div(deci18)
+			eth10000Decimal, err := decimal.NewFromString("100000000000000000000000")
+			if err != nil {
+				return
+			}
+			log.Println(fmt.Sprintf("%s, 账户：0x087F0957A8218BA06AdB0465C0aE5B0b57ae0649, 当前剩余：%s TOX,阀值: 100000", chainName, bToxETH))
+			if bTox.Cmp(eth10000Decimal) == -1 {
+				err = bot.SendMessage(fmt.Sprintf("@Abraham_Zero 跨链桥 TOX不足\n\n链 🔗 : %s\n\n账户: 0x087F0957A8218BA06AdB0465C0aE5B0b57ae0649, 当前剩余: %s, 低于阀值: 100000", chainName, bToxETH.String()), ChatId, false)
+				if err != nil {
+					log.Println(err)
+				}
+			}
 		}
 	}
 }
