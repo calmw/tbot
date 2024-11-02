@@ -39,7 +39,7 @@ func CheckErc20Balance() {
 		log.Println(err)
 		return
 	}
-	log.Println(len(accounts), 1122)
+
 	for _, account := range accounts {
 		check(account)
 	}
