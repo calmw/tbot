@@ -14,7 +14,7 @@ func Alarm() {
 	s := gocron.NewScheduler()
 	_ = s.Every(uint64(num)).Seconds().From(gocron.NextTick()).Do(blockchain.CheckBalance)
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.IsNodeMatch714TestnetAlive)
-	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.IsNodeMatch698TestnetAlive)
+	//_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.IsNodeMatch698TestnetAlive)
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(monitor.BridgeFailedOrderCount)
 	_ = s.Every(600).Seconds().From(gocron.NextTick()).Do(blockchain.CheckErc20Balance)
 	<-s.Start()
